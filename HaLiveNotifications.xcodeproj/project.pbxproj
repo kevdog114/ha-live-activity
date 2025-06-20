@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5DB066902E05B5E000F106CE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB0668F2E05B5E000F106CE /* WidgetKit.framework */; };
+		5DB066922E05B5E000F106CE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB066912E05B5E000F106CE /* SwiftUI.framework */; };
+		5DB066A32E05B5E300F106CE /* HaLiveActivityExtensionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5DB0668D2E05B5E000F106CE /* HaLiveActivityExtensionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		5DB066692E05AC7200F106CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,13 +27,47 @@
 			remoteGlobalIDString = 5DB066582E05AC6F00F106CE;
 			remoteInfo = HaLiveNotifications;
 		};
+		5DB066A12E05B5E300F106CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5DB066512E05AC6F00F106CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DB0668C2E05B5DF00F106CE;
+			remoteInfo = HaLiveActivityExtensionExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5DB066A82E05B5E300F106CE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5DB066A32E05B5E300F106CE /* HaLiveActivityExtensionExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5DB066592E05AC6F00F106CE /* HaLiveNotifications.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HaLiveNotifications.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DB066682E05AC7200F106CE /* HaLiveNotificationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HaLiveNotificationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DB066722E05AC7200F106CE /* HaLiveNotificationsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HaLiveNotificationsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DB0668D2E05B5E000F106CE /* HaLiveActivityExtensionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HaLiveActivityExtensionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DB0668F2E05B5E000F106CE /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		5DB066912E05B5E000F106CE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5DB066A42E05B5E300F106CE /* Exceptions for "HaLiveActivityExtension" folder in "HaLiveActivityExtensionExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5DB0668C2E05B5DF00F106CE /* HaLiveActivityExtensionExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5DB0665B2E05AC6F00F106CE /* HaLiveNotifications */ = {
@@ -43,6 +83,14 @@
 		5DB066752E05AC7200F106CE /* HaLiveNotificationsUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = HaLiveNotificationsUITests;
+			sourceTree = "<group>";
+		};
+		5DB066932E05B5E000F106CE /* HaLiveActivityExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5DB066A42E05B5E300F106CE /* Exceptions for "HaLiveActivityExtension" folder in "HaLiveActivityExtensionExtension" target */,
+			);
+			path = HaLiveActivityExtension;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,6 +117,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5DB0668A2E05B5DF00F106CE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5DB066922E05B5E000F106CE /* SwiftUI.framework in Frameworks */,
+				5DB066902E05B5E000F106CE /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,6 +135,8 @@
 				5DB0665B2E05AC6F00F106CE /* HaLiveNotifications */,
 				5DB0666B2E05AC7200F106CE /* HaLiveNotificationsTests */,
 				5DB066752E05AC7200F106CE /* HaLiveNotificationsUITests */,
+				5DB066932E05B5E000F106CE /* HaLiveActivityExtension */,
+				5DB0668E2E05B5E000F106CE /* Frameworks */,
 				5DB0665A2E05AC6F00F106CE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,8 +147,18 @@
 				5DB066592E05AC6F00F106CE /* HaLiveNotifications.app */,
 				5DB066682E05AC7200F106CE /* HaLiveNotificationsTests.xctest */,
 				5DB066722E05AC7200F106CE /* HaLiveNotificationsUITests.xctest */,
+				5DB0668D2E05B5E000F106CE /* HaLiveActivityExtensionExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5DB0668E2E05B5E000F106CE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5DB0668F2E05B5E000F106CE /* WidgetKit.framework */,
+				5DB066912E05B5E000F106CE /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,10 +171,12 @@
 				5DB066552E05AC6F00F106CE /* Sources */,
 				5DB066562E05AC6F00F106CE /* Frameworks */,
 				5DB066572E05AC6F00F106CE /* Resources */,
+				5DB066A82E05B5E300F106CE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5DB066A22E05B5E300F106CE /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				5DB0665B2E05AC6F00F106CE /* HaLiveNotifications */,
@@ -163,6 +234,28 @@
 			productReference = 5DB066722E05AC7200F106CE /* HaLiveNotificationsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		5DB0668C2E05B5DF00F106CE /* HaLiveActivityExtensionExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5DB066A52E05B5E300F106CE /* Build configuration list for PBXNativeTarget "HaLiveActivityExtensionExtension" */;
+			buildPhases = (
+				5DB066892E05B5DF00F106CE /* Sources */,
+				5DB0668A2E05B5DF00F106CE /* Frameworks */,
+				5DB0668B2E05B5DF00F106CE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5DB066932E05B5E000F106CE /* HaLiveActivityExtension */,
+			);
+			name = HaLiveActivityExtensionExtension;
+			packageProductDependencies = (
+			);
+			productName = HaLiveActivityExtensionExtension;
+			productReference = 5DB0668D2E05B5E000F106CE /* HaLiveActivityExtensionExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -184,6 +277,9 @@
 						CreatedOnToolsVersion = 16.4;
 						TestTargetID = 5DB066582E05AC6F00F106CE;
 					};
+					5DB0668C2E05B5DF00F106CE = {
+						CreatedOnToolsVersion = 16.4;
+					};
 				};
 			};
 			buildConfigurationList = 5DB066542E05AC6F00F106CE /* Build configuration list for PBXProject "HaLiveNotifications" */;
@@ -203,6 +299,7 @@
 				5DB066582E05AC6F00F106CE /* HaLiveNotifications */,
 				5DB066672E05AC7200F106CE /* HaLiveNotificationsTests */,
 				5DB066712E05AC7200F106CE /* HaLiveNotificationsUITests */,
+				5DB0668C2E05B5DF00F106CE /* HaLiveActivityExtensionExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +320,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5DB066702E05AC7200F106CE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5DB0668B2E05B5DF00F106CE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +357,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5DB066892E05B5DF00F106CE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +376,11 @@
 			isa = PBXTargetDependency;
 			target = 5DB066582E05AC6F00F106CE /* HaLiveNotifications */;
 			targetProxy = 5DB066732E05AC7200F106CE /* PBXContainerItemProxy */;
+		};
+		5DB066A22E05B5E300F106CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5DB0668C2E05B5DF00F106CE /* HaLiveActivityExtensionExtension */;
+			targetProxy = 5DB066A12E05B5E300F106CE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -410,7 +526,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.klschaefer.nasa-image-of-the-day.HaLiveNotifications";
+				PRODUCT_BUNDLE_IDENTIFIER = com.klschaefer.HaLiveNotifications;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -438,7 +554,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.klschaefer.nasa-image-of-the-day.HaLiveNotifications";
+				PRODUCT_BUNDLE_IDENTIFIER = com.klschaefer.HaLiveNotifications;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -450,13 +566,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SUS389HBA4;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.klschaefer.nasa-image-of-the-day.HaLiveNotificationsTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.klschaefer.HaLiveNotificationsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -469,13 +586,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SUS389HBA4;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.klschaefer.nasa-image-of-the-day.HaLiveNotificationsTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.klschaefer.HaLiveNotificationsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -492,7 +610,7 @@
 				DEVELOPMENT_TEAM = SUS389HBA4;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.klschaefer.nasa-image-of-the-day.HaLiveNotificationsUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.klschaefer.HaLiveNotificationsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -509,12 +627,66 @@
 				DEVELOPMENT_TEAM = SUS389HBA4;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.klschaefer.nasa-image-of-the-day.HaLiveNotificationsUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.klschaefer.HaLiveNotificationsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = HaLiveNotifications;
+			};
+			name = Release;
+		};
+		5DB066A62E05B5E300F106CE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SUS389HBA4;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HaLiveActivityExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HaLiveActivityExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.klschaefer.HaLiveNotifications.HaLiveActivityExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5DB066A72E05B5E300F106CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SUS389HBA4;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HaLiveActivityExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HaLiveActivityExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.klschaefer.HaLiveNotifications.HaLiveActivityExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -553,6 +725,15 @@
 			buildConfigurations = (
 				5DB066832E05AC7300F106CE /* Debug */,
 				5DB066842E05AC7300F106CE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5DB066A52E05B5E300F106CE /* Build configuration list for PBXNativeTarget "HaLiveActivityExtensionExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DB066A62E05B5E300F106CE /* Debug */,
+				5DB066A72E05B5E300F106CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
