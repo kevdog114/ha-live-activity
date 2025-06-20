@@ -10,9 +10,15 @@ import SwiftData
 
 @main
 struct HaLiveNotificationsApp: App {
+    // Initialize AppState as a StateObject or just a regular object
+    // depending on how it's managed. If AppState uses @Observable,
+    // it doesn't need to be @StateObject here if it's passed via .environment()
+    @State private var appState = AppState() // If AppState is @Observable
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
+                HomeAssistantConnection.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -26,7 +32,8 @@ struct HaLiveNotificationsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                    .environment(appState) // Inject AppState into the environment
         }
-        .modelContainer(sharedModelContainer)
+            .modelContainer(sharedModelContainer) // This provides the modelContext
     }
 }
