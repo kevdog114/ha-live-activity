@@ -3,21 +3,22 @@ import Foundation
 struct DiscoveredInstance: Identifiable, Hashable {
     let id = UUID()
     let name: String
-    let host: String // e.g., "192.168.1.10"
-    let port: Int    // e.g., 8123
-    var url: URL? {
+    let host: String
+    let port: Int
+
+    /// A computed property for the base URL of the instance.
+    var baseURL: URL? {
         URL(string: "http://\(host):\(port)")
     }
 
-    // Implement Hashable
+    // Hashable conformance
     func hash(into hasher: inout Hasher) {
-        hasher.combine(name)
         hasher.combine(host)
         hasher.combine(port)
     }
 
-    // Implement Equatable
+    // Equatable conformance for Set uniqueness
     static func == (lhs: DiscoveredInstance, rhs: DiscoveredInstance) -> Bool {
-        lhs.name == rhs.name && lhs.host == rhs.host && lhs.port == rhs.port
+        lhs.host == rhs.host && lhs.port == rhs.port
     }
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "C0C85FFD-FA08-4066-B1E6-4C2EBF704ABD"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CFF60DD0-481C-42A6-B084-67B6C55080D3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HaLiveNotifications/Services/HomeAssistantDiscoveryService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
+            landmarkName = "startDiscovery()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "CFF60DD0-481C-42A6-B084-67B6C55080D3 - ad8efadf168caec6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #2 (Swift.Set&lt;Network.NWBrowser.Result&gt;, Swift.Set&lt;Network.NWBrowser.Result.Change&gt;) -&gt; () in HaLiveNotifications.HomeAssistantDiscoveryService.startDiscovery() -&gt; ()"
+                  moduleName = "HaLiveNotifications.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/klschaefer/dev-projects/HaLiveNotifications/HaLiveNotifications/Services/HomeAssistantDiscoveryService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "65"
+                  endingLineNumber = "65">
+               </Location>
+               <Location
+                  uuid = "CFF60DD0-481C-42A6-B084-67B6C55080D3 - 6a005762d1de2c3e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;HaLiveNotifications.DiscoveredInstance&gt;) -&gt; () in closure #1 () -&gt; () in closure #2 (Swift.Set&lt;Network.NWBrowser.Result&gt;, Swift.Set&lt;Network.NWBrowser.Result.Change&gt;) -&gt; () in HaLiveNotifications.HomeAssistantDiscoveryService.startDiscovery() -&gt; ()"
+                  moduleName = "HaLiveNotifications.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/klschaefer/dev-projects/HaLiveNotifications/HaLiveNotifications/Services/HomeAssistantDiscoveryService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

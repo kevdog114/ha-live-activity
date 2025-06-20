@@ -64,6 +64,7 @@ struct ContentView: View {
             // Present HomeAssistantLoginView as a sheet.
             // Pass AppState and modelContext if needed, though they are environment objects.
             HomeAssistantLoginView()
+                
                 .environment(appState) // Ensure AppState is available if sheet has its own env scope
                 .environment(\.modelContext, modelContext) // Pass model context
         }

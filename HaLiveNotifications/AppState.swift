@@ -56,7 +56,7 @@ class AppState {
 
     @MainActor
     func connect(to instance: DiscoveredInstance, accessToken: String, refreshToken: String? = nil, context: ModelContext) {
-        guard let baseURL = instance.url else {
+        guard let baseURL = instance.baseURL else {
             self.connectionError = .configurationError("Invalid URL for discovered instance.")
             return
         }

@@ -1,112 +1,156 @@
 // In HaLiveNotifications/Views/LiveActivityListView.swift
-// This is a simplified example. A real view would have more robust state management.
 import SwiftUI
+import SwiftData
 
 struct LiveActivityListView: View {
     @Environment(AppState.self) private var appState
-    @Environment(\.modelContext) private var modelContext // Added for disconnect
+    @Environment(\.modelContext) private var modelContext
 
     // State for this view
     @State private var entities: [HAState] = []
     @State private var isLoadingActivities: Bool = false
-    @State private var viewError: Error? = nil // Use HAErrors or APIClient.APIError
+    @State private var viewError: Error?
 
+    // Main view body, now delegating to helper properties
     var body: some View {
-        NavigationView { // Or NavigationStack
-            Group {
-                if isLoadingActivities {
-                    ProgressView("Loading Home Assistant Data...")
-                } else if let error = viewError {
-                    VStack {
-                        Text("Error Loading Data")
-                            .font(.headline)
-                        Text(error.localizedDescription)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                        Button("Retry") {
-                            fetchEntities()
-                        }
-                        .padding(.top)
-                    }
-                } else if entities.isEmpty {
-                    VStack {
-                        Text("No entities found or loaded yet.")
-                            .foregroundColor(.gray)
-                        Button("Fetch Entities") {
-                             fetchEntities()
-                         }
-                        .padding()
-                    }
-                } else {
-                    List {
-                        // Section for general info
-                        Section("Connection Info") {
-                            if let connection = appState.currentConnection {
-                                Text("Connected to: \(connection.instanceName ?? connection.baseURL.absoluteString)")
-                                Text("Base URL: \(connection.baseURL.absoluteString)")
-                            } else {
-                                Text("Not connected.")
-                            }
-                            Button("Test API: Fetch States") {
-                                 fetchEntities()
-                             }
-                        }
+        NavigationView {
+            contentView
+                .navigationTitle("HA Console")
+                .toolbar { mainToolbar }
+                .onAppear(perform: onAppearAction)
+                // FIX: Watch a value that is Equatable, like whether the client is nil.
+                .onChange(of: appState.apiClient != nil) { _, isConnected in
+                    onClientChange(isConnected: isConnected)
+                }
+        }
+    }
 
-                        // Section for entities
-                        Section("Entities (States) - \(entities.count) found") {
-                            ForEach(entities) { entity in
-                                VStack(alignment: .leading) {
-                                    Text(entity.attributes["friendly_name"]?.value as? String ?? entity.entityId)
-                                        .font(.headline)
-                                    Text("State: \(entity.state)")
-                                        .font(.subheadline)
-                                    if let lastChanged = entity.attributes["last_changed"]?.value as? String {
-                                        Text("Last Changed: \(formattedDate(from: lastChanged) ?? lastChanged)")
-                                            .font(.caption2)
-                                            .foregroundColor(.gray)
-                                    }
-                                }
-                            }
-                        }
+    // MARK: - View Builders
+
+    /// The main content view that switches between loading, error, empty, and list states.
+    @ViewBuilder
+    private var contentView: some View {
+        if isLoadingActivities {
+            ProgressView("Loading Home Assistant Data...")
+        } else if let error = viewError {
+            errorView(error)
+        } else if entities.isEmpty {
+            emptyStateView
+        } else {
+            entityListView
+        }
+    }
+
+    /// The view to display when an error occurs.
+    private func errorView(_ error: Error) -> some View {
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.largeTitle)
+                .foregroundColor(.red)
+            Text("Error Loading Data")
+                .font(.headline)
+            Text(error.localizedDescription)
+                .font(.caption)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+            Button("Retry", action: fetchEntities)
+                .buttonStyle(.borderedProminent)
+        }
+    }
+
+    /// The view to display when no entities are loaded.
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "tray.fill")
+                .font(.largeTitle)
+                .foregroundColor(.gray)
+            Text("No Entities Found")
+                .font(.headline)
+            Text("Connect to an instance and fetch entities.")
+                .font(.caption)
+            Button("Fetch Entities", action: fetchEntities)
+                .buttonStyle(.bordered)
+                .disabled(appState.apiClient == nil)
+        }
+    }
+
+    /// The main list view that displays connection info and entities.
+    private var entityListView: some View {
+        List {
+            connectionInfoSection
+            entityListSection
+        }
+    }
+
+    /// A section for displaying the current connection information.
+    private var connectionInfoSection: some View {
+        Section("Connection Info") {
+            if let connection = appState.currentConnection {
+                Text(connection.instanceName ?? "Unnamed Instance")
+                    .fontWeight(.bold)
+                Text(connection.baseURL.absoluteString)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            } else {
+                Text("Not connected.")
+            }
+            Button("Test API: Fetch States", action: fetchEntities)
+        }
+    }
+    
+    /// A section that lists all the fetched entities.
+    private var entityListSection: some View {
+        Section("Entities (\(entities.count) found)") {
+            ForEach(entities) { entity in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(entity.attributes["friendly_name"]?.value as? String ?? entity.entityId)
+                        .font(.headline)
+                    Text("State: \(entity.state)")
+                        .font(.subheadline)
+                    if let lastChanged = entity.attributes["last_changed"]?.value as? String {
+                        Text(formattedDate(from: lastChanged) ?? lastChanged)
+                            .font(.caption2)
+                            .foregroundColor(.gray)
                     }
                 }
+                .padding(.vertical, 4)
             }
-            .navigationTitle("Home Assistant Console")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Disconnect") {
-                        appState.disconnect(context: modelContext)
-                    }
-                }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button { // Explicit refresh button
-                        fetchEntities()
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                    .disabled(isLoadingActivities || appState.apiClient == nil)
-                }
+        }
+    }
+
+    /// The toolbar content for the navigation view.
+    @ToolbarContentBuilder
+    private var mainToolbar: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button("Disconnect", role: .destructive) {
+                appState.disconnect(context: modelContext)
             }
-            .onAppear {
-                // Fetch data when the view appears if not already loaded and client is available
-                if entities.isEmpty && appState.apiClient != nil && !isLoadingActivities {
-                    fetchEntities()
-                }
-            }
-            // Optional: Refresh when connection status changes and we get a new client
-            .onChange(of: appState.apiClient) { _, newApiClient in
-                if newApiClient != nil && entities.isEmpty { // Only if entities are currently empty
-                    fetchEntities()
-                }
-            }
+            .disabled(appState.currentConnection == nil)
+        }
+        ToolbarItem(placement: .navigationBarLeading) {
+            Button("Refresh", systemImage: "arrow.clockwise", action: fetchEntities)
+                .disabled(isLoadingActivities || appState.apiClient == nil)
+        }
+    }
+    
+    // MARK: - Actions & Logic
+
+    private func onAppearAction() {
+        if entities.isEmpty && appState.apiClient != nil && !isLoadingActivities {
+            fetchEntities()
+        }
+    }
+    
+    // FIX: This function now receives a simple Boolean.
+    private func onClientChange(isConnected: Bool) {
+        if isConnected && entities.isEmpty {
+            fetchEntities()
         }
     }
 
     private func fetchEntities() {
         guard let client = appState.apiClient else {
             viewError = HAErrors.configurationError("API Client not available. Connect first.")
-            // Clear entities if client is lost
-            // self.entities = [] // Uncomment if you want to clear data when client is nil
             return
         }
 
@@ -116,33 +160,39 @@ struct LiveActivityListView: View {
         Task {
             do {
                 let fetchedStates = try await client.getStates()
-                // Sort by friendly name or entity ID for consistent display
-                self.entities = fetchedStates.sorted {
-                    let name1 = $0.attributes["friendly_name"]?.value as? String ?? $0.entityId
-                    let name2 = $1.attributes["friendly_name"]?.value as? String ?? $1.entityId
-                    return name1.localizedCaseInsensitiveCompare(name2) == .orderedAscending
+                // Update state on the main thread
+                await MainActor.run {
+                    self.entities = fetchedStates.sorted {
+                        let name1 = $0.attributes["friendly_name"]?.value as? String ?? $0.entityId
+                        let name2 = $1.attributes["friendly_name"]?.value as? String ?? $1.entityId
+                        return name1.localizedCaseInsensitiveCompare(name2) == .orderedAscending
+                    }
+                    print("Fetched and sorted \(fetchedStates.count) entities.")
+                    self.isLoadingActivities = false
                 }
-                print("Fetched and sorted \(fetchedStates.count) entities.")
             } catch {
                 print("Error fetching entities: \(error)")
-                if let apiError = error as? HomeAssistantAPIClient.APIError {
-                    self.viewError = apiError
-                } else {
-                    self.viewError = HAErrors.unknownError(error.localizedDescription)
+                let processedError = (error as? HAErrors) ?? HAErrors.unknownError(error.localizedDescription)
+                // Update state on the main thread
+                await MainActor.run {
+                    self.viewError = processedError
+                    self.entities = []
+                    self.isLoadingActivities = false
                 }
-                 self.entities = [] // Clear entities on error
             }
-            isLoadingActivities = false
         }
     }
 
-    // Helper to format date strings
+    // MARK: - Helpers
+
     private func formattedDate(from dateString: String) -> String? {
         let formatter = ISO8601DateFormatter()
+        // Try parsing with fractional seconds first
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         if let date = formatter.date(from: dateString) {
             return date.formatted(date: .abbreviated, time: .standard)
         }
+        // Fallback to parsing without fractional seconds
         formatter.formatOptions = [.withInternetDateTime]
         if let date = formatter.date(from: dateString) {
             return date.formatted(date: .abbreviated, time: .standard)
@@ -151,53 +201,41 @@ struct LiveActivityListView: View {
     }
 }
 
-// Preview for LiveActivityListView
-struct LiveActivityListView_Previews: PreviewProvider {
-    static var previews: some View {
-        // Create a dummy AppState and ModelContainer for preview
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: HomeAssistantConnection.self, Item.self, configurations: config)
+// MARK: - Preview
 
+struct LiveActivityListView_Previews: PreviewProvider {
+    // Helper to create a fully configured AppState for previews
+    static func configuredAppState(withEntities: Bool = false) -> AppState {
         let appState = AppState()
-        // Simulate a connected state for preview
         let previewConnection = HomeAssistantConnection(
             baseURL: URL(string: "http://preview.home.assistant.io:8123")!,
             accessToken: "fake_token_for_preview",
             instanceName: "Preview HA"
         )
-        // Manually insert into context for AppState to load, or set directly for preview
-        // container.mainContext.insert(previewConnection) // Not strictly needed if just setting on appState
-        // try? container.mainContext.save()
+        // This assignment triggers the didSet in AppState, initializing the apiClient
+        appState.currentConnection = previewConnection
+        return appState
+    }
 
-        // To ensure apiClient is initialized in AppState for preview:
-        appState.currentConnection = previewConnection // This triggers didSet and initializes apiClient
+    // Helper to create the model container for SwiftData
+    @MainActor
+    static func makeContainer() -> ModelContainer {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try! ModelContainer(for: HomeAssistantConnection.self, configurations: config)
 
-        // Example entities for preview
-        let exampleEntities = [
-            HAState(entityId: "light.living_room", state: "on", attributes: ["friendly_name": AnyCodableValue("Living Room Light")], lastChanged: "2023-01-01T10:00:00Z", lastUpdated: "2023-01-01T10:00:00Z"),
-            HAState(entityId: "sensor.temperature", state: "22.5", attributes: ["friendly_name": AnyCodableValue("Room Temperature"), "unit_of_measurement": AnyCodableValue("°C")], lastChanged: "2023-01-01T10:05:00Z", lastUpdated: "2023-01-01T10:05:00Z")
-        ]
+        return container
+    }
+    
+    static var previews: some View {
+        let container = makeContainer()
 
-        // Simulate already fetched entities for one preview
-        let appStateWithEntities = AppState()
-        appStateWithEntities.currentConnection = previewConnection
-        // appStateWithEntities.entities = exampleEntities // If entities were directly in AppState
+        // Preview for the empty state, ready to fetch
+        LiveActivityListView()
+            .environment(configuredAppState())
+            .modelContainer(container)
+            .previewDisplayName("Empty State")
 
-        return Group {
-            LiveActivityListView()
-                .environment(appState) // apiClient will be there, entities empty initially
-                .modelContainer(container)
-                .previewDisplayName("Empty, Fetches on Appear")
-
-            // This variant would require LiveActivityListView to accept entities or for AppState to hold them
-            // For now, the view manages its own @State entities.
-//            LiveActivityListView()
-//                .environment(appStateWithData)
-//                .modelContainer(container)
-//                .onAppear {
-//                    // How to inject data into preview for @State var is tricky without changing design
-//                }
-//                .previewDisplayName("With Preloaded Data (Simulated)")
-        }
+        // You would need to adjust the view or AppState to directly show pre-filled entities
+        // in a preview, as @State is owned by the view.
     }
 }
