@@ -29,6 +29,10 @@ class AppState {
     var isLoading: Bool = false
     var connectionError: HAErrors?
 
+    // Properties to hold temporary OAuth state during the flow
+    var pendingOAuthState: String?
+    var pendingPkceCodeVerifier: String?
+
     // MARK: - Initialization
     init() {
         // Initial apiClient will be nil until a connection is loaded/established
@@ -125,5 +129,12 @@ class AppState {
             self.currentConnection = nil
             self.isLoading = false
         }
+    }
+
+    // MARK: - OAuth State Management
+    func clearPendingOAuthData() {
+        pendingOAuthState = nil
+        pendingPkceCodeVerifier = nil
+        print("Cleared pending OAuth state and PKCE verifier from AppState.")
     }
 }
