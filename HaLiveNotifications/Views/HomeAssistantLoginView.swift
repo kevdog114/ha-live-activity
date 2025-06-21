@@ -18,9 +18,7 @@ struct HomeAssistantLoginView: View {
     // Temporary state for instance name during connection
     @State private var connectingToInstanceName: String? = nil
 
-    // For PKCE and state parameter
-    @State private var pkceCodeVerifier: String? = nil
-    @State private var oauthState: String? = nil
+    // PKCE and state parameters are now managed in AppState
 
 
     var body: some View {
@@ -77,11 +75,12 @@ struct HomeAssistantLoginView: View {
                 // Reset state if view appears
                 authorizationCode = nil
                 isExchangingCode = false
-                // Clear PKCE state if view reappears and we are not in the middle of an auth flow
-                // This is a simple reset; a more robust solution might involve checking if auth is pending.
-                if !isExchangingCode && authorizationCode == nil {
-                    pkceCodeVerifier = nil
-                    oauthState = nil
+                // If no auth code is present (i.e., we are not returning from a successful redirect)
+                // and not currently exchanging a code, it's safe to clear any pending OAuth data in AppState.
+                // This handles cases where the user navigates away and back to the login view
+                // before completing an OAuth flow.
+                if authorizationCode == nil && !isExchangingCode {
+                    appState.clearPendingOAuthData()
                 }
             }
             .onOpenURL { url in
@@ -99,21 +98,21 @@ struct HomeAssistantLoginView: View {
     private func startOAuthFlow() {
         appState.connectionError = nil
 
-        // 1. Generate and store state
+        // 1. Generate and store state in AppState
         let generatedState = PKCEUtil.generateCodeVerifier(length: 32) // state can be shorter
-        self.oauthState = generatedState
-        print("Generated state: \(generatedState)")
+        appState.pendingOAuthState = generatedState
+        print("Generated state and stored in AppState: \(generatedState)")
 
-        // 2. Generate and store code_verifier, create code_challenge
+        // 2. Generate and store code_verifier in AppState, create code_challenge
         let generatedCodeVerifier = PKCEUtil.generateCodeVerifier()
         guard let codeChallenge = PKCEUtil.generateCodeChallenge(from: generatedCodeVerifier) else {
             appState.connectionError = HAErrors.configurationError("Could not generate PKCE code challenge.")
+            appState.clearPendingOAuthData() // Clear any partial state
             return
         }
-        self.pkceCodeVerifier = generatedCodeVerifier
-        // print("Generated PKCE Verifier: \(generatedCodeVerifier)") // For debugging, don't log in production
+        appState.pendingPkceCodeVerifier = generatedCodeVerifier
+        // print("Generated PKCE Verifier and stored in AppState: \(generatedCodeVerifier)") // For debugging
         print("Generated PKCE Challenge: \(codeChallenge)")
-
 
         var components = URLComponents(string: Constants.myHomeAssistantRedirectOAuthURL)
         components?.queryItems = [
@@ -129,8 +128,7 @@ struct HomeAssistantLoginView: View {
 
         guard let authURL = components?.url else {
             appState.connectionError = HAErrors.configurationError("Could not create authorization URL.")
-            self.oauthState = nil // Clear stored state on error
-            self.pkceCodeVerifier = nil // Clear stored verifier on error
+            appState.clearPendingOAuthData() // Clear stored state/verifier on error
             return
         }
 
@@ -142,7 +140,7 @@ struct HomeAssistantLoginView: View {
         print("Received callback URL: \(url.absoluteString)")
         guard url.scheme == Constants.homeAssistantOAuthRedirectURIScheme else {
             print("Callback URL scheme does not match.")
-            clearOAuthState()
+            appState.clearPendingOAuthData()
             return
         }
 
@@ -151,13 +149,13 @@ struct HomeAssistantLoginView: View {
         // Validate state
         guard let receivedState = components?.queryItems?.first(where: { $0.name == "state" })?.value else {
             appState.connectionError = HAErrors.authenticationError("OAuth callback missing 'state' parameter.")
-            clearOAuthState()
+            appState.clearPendingOAuthData()
             return
         }
 
-        guard let storedState = self.oauthState, receivedState == storedState else {
+        guard let storedState = appState.pendingOAuthState, receivedState == storedState else {
             appState.connectionError = HAErrors.authenticationError("OAuth 'state' parameter mismatch. Possible CSRF attack.")
-            clearOAuthState()
+            appState.clearPendingOAuthData()
             return
         }
 
@@ -168,12 +166,13 @@ struct HomeAssistantLoginView: View {
                 self.instanceURLString = haInstanceURL
                 print("HA Instance URL from callback: \(haInstanceURL)")
             }
-            // Note: oauthState and pkceCodeVerifier are kept until token exchange
+            // PKCE verifier and state are still in AppState, to be used in exchangeCodeForToken
+            // and cleared afterwards.
             exchangeCodeForToken(code: code)
         } else if let error = components?.queryItems?.first(where: { $0.name == "error" })?.value {
             let errorDescription = components?.queryItems?.first(where: { $0.name == "error_description" })?.value ?? "Unknown OAuth error."
             appState.connectionError = HAErrors.authenticationError("OAuth Error: \(error) - \(errorDescription)")
-            clearOAuthState() // Clear state on error
+            appState.clearPendingOAuthData() // Clear state on error
             isExchangingCode = false
         }
     }
@@ -181,21 +180,21 @@ struct HomeAssistantLoginView: View {
     private func exchangeCodeForToken(code: String) {
         guard !instanceURLString.isEmpty, let haInstanceBaseURL = URL(string: instanceURLString) else {
             appState.connectionError = HAErrors.configurationError("Home Assistant instance URL is not set or invalid. Please enter it manually.")
-            clearOAuthState()
+            appState.clearPendingOAuthData()
             isExchangingCode = false
             return
         }
 
-        guard let currentPkceCodeVerifier = self.pkceCodeVerifier else {
-            appState.connectionError = HAErrors.authenticationError("PKCE code verifier missing. Cannot exchange token.")
-            clearOAuthState()
+        guard let currentPkceCodeVerifier = appState.pendingPkceCodeVerifier else {
+            appState.connectionError = HAErrors.authenticationError("PKCE code verifier missing from AppState. Cannot exchange token.")
+            appState.clearPendingOAuthData()
             isExchangingCode = false
             return
         }
 
         guard let tokenURL = URL(string: "/oauth2/token", relativeTo: haInstanceBaseURL) else {
             appState.connectionError = HAErrors.configurationError("Could not create token exchange URL.")
-            clearOAuthState()
+            appState.clearPendingOAuthData()
             isExchangingCode = false
             return
         }
@@ -253,16 +252,8 @@ struct HomeAssistantLoginView: View {
             }
             isExchangingCode = false
             connectingToInstanceName = nil
-            clearOAuthState() // Clear PKCE and state values after completion
+            appState.clearPendingOAuthData() // Clear PKCE and state values from AppState after completion
         }
-    }
-
-    private func clearOAuthState() {
-        self.pkceCodeVerifier = nil
-        self.oauthState = nil
-        // self.authorizationCode = nil // Might want to keep auth code for debugging or retry, or clear it.
-                                     // For now, focusing on PKCE state.
-        print("Cleared PKCE code verifier and OAuth state.")
     }
 }
 
