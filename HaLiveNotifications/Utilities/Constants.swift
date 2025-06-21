@@ -11,8 +11,11 @@ struct Constants {
     // MARK: - My Home Assistant OAuth Configuration
     // These URLs are for the production instance of my.home-assistant.io
     static let myHomeAssistantBaseURL = "https://my.home-assistant.io"
-    static let myHomeAssistantAuthorizationURL = "\(myHomeAssistantBaseURL)/oauth2/authorize"
-    static let myHomeAssistantTokenURL = "\(myHomeAssistantBaseURL)/oauth2/token" // This is a guess, needs verification. Actual token endpoint is on the HA instance itself.
+    // Corrected URL for initiating OAuth via My Home Assistant
+    static let myHomeAssistantRedirectOAuthURL = "\(myHomeAssistantBaseURL)/redirect/oauth"
+    // The token URL is not on my.home-assistant.io, but on the user's HA instance.
+    // Example: "http://[YOUR_INSTANCE_URL]/oauth2/token"
+    // This will be constructed dynamically in the app.
 
     // MARK: - OAuth Client Configuration
     // Replace with your actual client ID from Home Assistant registration
