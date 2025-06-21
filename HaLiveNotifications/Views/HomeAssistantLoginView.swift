@@ -88,7 +88,7 @@ struct HomeAssistantLoginView: View {
 
     private func startOAuthFlow() {
         appState.connectionError = nil
-        var components = URLComponents(string: Constants.myHomeAssistantAuthorizationURL)
+        var components = URLComponents(string: Constants.myHomeAssistantRedirectOAuthURL)
         components?.queryItems = [
             URLQueryItem(name: "response_type", value: "code"),
             URLQueryItem(name: "client_id", value: Constants.homeAssistantOAuthClientID),
